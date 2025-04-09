@@ -44,9 +44,10 @@ export default function ManageSpots() {
 
     return (
         <div className="max-w-3xl mx-auto p-10 text-sm">
-            
-        <button onClick={() => router.back()} className="hover:underline">Back</button>  
-        <h1 className="text-xl font-semibold mb-4 text-left">Vehicles</h1>
+        <div className="flex justify-between items-center mb-3">
+            <button onClick={() => router.back()} className="px-3 py-1 bg-zinc-500 text-white">Back</button>  
+            <h1 className="text-xl font-semibold mr-1">Vehicles</h1>
+        </div>   
             <table className="w-full border text-left">
             <thead>
                 <tr className="bg-gray-100">

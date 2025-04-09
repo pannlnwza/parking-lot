@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { ParkingSpot } from './ParkingSpot';
 import { VehicleSizeEnum } from './VehicleSize';
+import { ParkingLot } from '@/models/ParkingLot';
 
 const SPOTS_PER_ROW = 10;
 
@@ -11,27 +12,28 @@ const levelSchema = new mongoose.Schema({
 });
 
 levelSchema.methods.initializeSpots = async function (numberSpots) {
+	const lot = await ParkingLot.getInstance();
 	const largeSpots = Math.floor(numberSpots / 4);
 	const motorcycleSpots = Math.floor(numberSpots / 4);
 	const compactSpots = numberSpots - largeSpots - motorcycleSpots;
 
 	const spotIds = [];
-		for (let i = 0; i < numberSpots; i++) {
+	for (let i = 0; i < numberSpots; i++) {
 		let size = VehicleSizeEnum.MOTORCYCLE;
-		
+	
 		if (i < largeSpots) {
-		size = VehicleSizeEnum.BUS;
+			size = VehicleSizeEnum.BUS;
 		} else if (i < largeSpots + compactSpots) {
-		size = VehicleSizeEnum.CAR;
+			size = VehicleSizeEnum.CAR;
 		}
 
 		const row = Math.floor(i / SPOTS_PER_ROW);
 		const spot = await ParkingSpot.create({
-		level: this._id,
-		row,
-		spotNumber: i,
-		size,
-		isOccupied: false,
+			level: this._id,
+			row,
+			spotNumber: i,
+			size,
+			isOccupied: false,
 		});
 
 		spotIds.push(spot._id);
@@ -40,6 +42,9 @@ levelSchema.methods.initializeSpots = async function (numberSpots) {
 	this.spots = spotIds;
 	this.availableSpots = numberSpots;
 	await this.save();
+	lot.levels.push(this._id);
+	lot.totalLevels = lot.levels.length;
+	await lot.save();
 };
 
 levelSchema.methods.getAvailableSpots = function () {

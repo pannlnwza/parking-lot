@@ -1,5 +1,15 @@
 import { Vehicle } from "../../models/Vehicle";
+import { Motorcycle } from "@/models/Motorcycle";
+import { Car } from "@/models/Car";
+import { Bus } from "@/models/Bus";
+import { VehicleSizeEnum } from "@/models/VehicleSize";
 import Database from "@/lib/mongodb";
+
+const VehicleModelEnum = {
+	[VehicleSizeEnum.MOTORCYCLE]: Motorcycle,
+	[VehicleSizeEnum.CAR]: Car,
+	[VehicleSizeEnum.BUS]: Bus,
+};
 
 export default async function handler(req, res) {
 	await Database.getInstance().connect();
@@ -16,11 +26,12 @@ export default async function handler(req, res) {
 			if (existingVehicle) {
 				return res.status(400).json({ message: "Vehicle with this license plate already exists" });
 			}
-
-			const newVehicle = new Vehicle({
-				licensePlate,
-				size,
-			});
+			
+			const Model = VehicleModelEnum[size];
+			if (!Model) {
+				return res.status(400).json({ message: "Invalid vehicle size" });
+			}
+			const newVehicle = await Model.create({ licensePlate, size });
 			await newVehicle.save();
 			res.status(201).json(newVehicle);
 		} catch (error) {
@@ -29,10 +40,10 @@ export default async function handler(req, res) {
 
 	} else if (req.method === "GET") {
 		try {
-		const vehicles = await Vehicle.find().populate("parkedSpots");
-		res.status(200).json(vehicles);
+			const vehicles = await Vehicle.find().populate("parkedSpots");
+			res.status(200).json(vehicles);
 		} catch (error) {
-		res.status(500).json({ message: "Error fetching vehicles" });
+			res.status(500).json({ message: "Error fetching vehicles" });
 		}
 	} else if (req.method === "DELETE") {
 		const { id } = req.body;

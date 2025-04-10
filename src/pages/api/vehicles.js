@@ -3,7 +3,7 @@ import { Motorcycle } from "@/models/Motorcycle";
 import { Car } from "@/models/Car";
 import { Bus } from "@/models/Bus";
 import { VehicleSizeEnum } from "@/models/VehicleSize";
-import Database from "@/lib/mongodb";
+import Database from "@/lib/Database";
 
 const VehicleModelEnum = {
 	[VehicleSizeEnum.MOTORCYCLE]: Motorcycle,
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
 
 	} else if (req.method === "GET") {
 		try {
-			const vehicles = await Vehicle.find().populate("parkedSpots");
+			const vehicles = await Vehicle.find().populate({path: "parkedSpots", populate: { path: "level" }});
 			res.status(200).json(vehicles);
 		} catch (error) {
 			res.status(500).json({ message: "Error fetching vehicles" });
@@ -49,7 +49,13 @@ export default async function handler(req, res) {
 		const { id } = req.body;
 		console.log("Deleting vehicle with ID:", id);
 		try {
-			await Vehicle.findByIdAndDelete(id);
+			const vehicle = await Vehicle.findById(id);
+			if (!vehicle) {
+				return res.status(404).json({ message: "Vehicle not found" });
+			}
+			await vehicle.clearSpots();
+			await vehicle.save();
+			await Vehicle.deleteOne({ _id: id });
 			res.status(200).json({ message: "Vehicle deleted" });
 		} catch (error) {
 			res.status(500).json({ message: "Error deleting vehicle" });

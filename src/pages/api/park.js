@@ -1,8 +1,7 @@
-import Database from "@/lib/mongodb";
+import Database from "@/lib/Database";
 import { Level } from "@/models/Level";
 import { Vehicle } from "@/models/Vehicle";
 import { ParkingLot } from "@/models/ParkingLot";
-import { unparkVehicle } from "@/lib/unparkVehicle";
 
 export default async function handler(req, res) {
 	await Database.getInstance().connect();
@@ -19,8 +18,8 @@ export default async function handler(req, res) {
 			if (!vehicle) {
 				return res.status(404).json({ message: "Vehicle not found." });
 			}
-			
-			unparkVehicle(vehicle._id);
+
+			await vehicle.clearSpots();
 			let success = false;
 
 			if (levelId === "auto") {

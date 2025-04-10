@@ -1,5 +1,5 @@
 import { Level } from "@/models/Level";
-import Database from "@/lib/mongodb";
+import Database from "@/lib/Database";
 
 export default async function handler(req, res) {
   	await Database.getInstance().connect();

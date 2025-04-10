@@ -1,4 +1,4 @@
-import Database from "@/lib/mongodb";
+import Database from "@/lib/Database";
 import { ParkingSpot } from "@/models/ParkingSpot";
 
 export default async function handler(req, res) {

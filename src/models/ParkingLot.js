@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Level } from "./Level.js";
+import { Level } from "@/models/Level.js";
 
 const parkingLotSchema = new mongoose.Schema({
     levels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Level" }],

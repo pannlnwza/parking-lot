@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { ParkingSpot } from "./ParkingSpot.js";
-import { Level } from "./Level.js";
-import { VehicleSizeEnum } from "./VehicleSize.js";
+import { ParkingSpot } from "@/models/ParkingSpot.js";
+import { Level } from "@/models/Level.js";
+import { VehicleSizeEnum } from "@/models/VehicleSize.js";
 
 const vehicleSchema = new mongoose.Schema({
   	licensePlate: { type: String, required: true, unique: true },
@@ -51,6 +51,5 @@ vehicleSchema.methods.canFitInSpot = function (spot) {
     	(spot.size === "Motorcycle" && this.size === "Car")
   	);
 };
-
 
 export const Vehicle = mongoose.models.Vehicle || mongoose.model("Vehicle", vehicleSchema);

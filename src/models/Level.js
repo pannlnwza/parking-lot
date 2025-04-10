@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { ParkingSpot } from './ParkingSpot';
-import { VehicleSizeEnum } from './VehicleSize';
+import { ParkingSpot } from '@/models/ParkingSpot';
+import { VehicleSizeEnum } from '@/models/VehicleSize';
 import { ParkingLot } from '@/models/ParkingLot';
 
 const SPOTS_PER_ROW = 10;

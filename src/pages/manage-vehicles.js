@@ -53,7 +53,8 @@ export default function ManageSpots() {
                 <tr className="bg-gray-100">
                 <th className="p-2 border whitespace-nowrap w-auto">License Plate</th>
                 <th className="p-2 border whitespace-nowrap w-auto">Type</th>
-                <th className="p-2 border whitespace-nowrap w-auto">Parked Spots</th>
+                <th className="p-2 border whitespace-nowrap w-auto">Level Parked</th>
+                <th className="p-2 border whitespace-nowrap w-auto">Spot(s) Parked</th>
                 <th className="p-2 border whitespace-nowrap w-auto">Actions</th>
                 </tr>
             </thead>
@@ -62,6 +63,10 @@ export default function ManageSpots() {
                 <tr key={vehicle._id}>
                     <td className="p-2 border whitespace-nowrap w-auto">{vehicle.licensePlate}</td>
                     <td className="p-2 border whitespace-nowrap w-auto">{vehicle.size}</td>
+                    <td className="p-2 border whitespace-nowrap w-auto">
+                    {vehicle.parkedSpots.length > 0 && vehicle.parkedSpots[0].level
+                    ? vehicle.parkedSpots[0].level.floor : '-'}
+                    </td>
                     <td className="p-2 border whitespace-nowrap w-auto">
                         {vehicle.parkedSpots.length > 0
                         ? vehicle.parkedSpots.map((spot) => spot.spotNumber).join(", ")

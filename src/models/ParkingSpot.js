@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
+import { VehicleSizeEnum } from '@/models/VehicleSize';
 
 const parkingSpotSchema = new mongoose.Schema({
 	level: { type: mongoose.Schema.Types.ObjectId, ref: 'Level', required: true },
 	row: { type: Number, required: true },
 	spotNumber: { type: Number, required: true },
-	size: { type: String, enum: ['Motorcycle', 'Car', 'Bus'], required: true },
+	size: { type: String, enum: Object.values(VehicleSizeEnum), required: true },
 	isOccupied: { type: Boolean, default: false },
 	vehicle: { type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle', default: null },
 });
@@ -17,7 +18,6 @@ parkingSpotSchema.methods.park = async function (vehicle) {
 	if (this.canFitVehicle(vehicle)) {
 		this.isOccupied = true;
 		this.vehicle = vehicle._id;
-		await this.save();
 		vehicle.parkInSpot(this);
 		await vehicle.save();
 		return true;
